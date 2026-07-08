@@ -1,5 +1,12 @@
 # 🛡️ Pandemic Resilience System (PRS)
 
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-red)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-purple)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+A full-stack pandemic resource management system built using Spring Boot, SQL Server, Bootstrap, and JavaScript.
 A full-stack web application designed to support governments, merchants, and citizens during public health emergencies by managing critical resources, inventory, purchase regulations, and vaccination records.
 
 ---
