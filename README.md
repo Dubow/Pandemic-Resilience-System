@@ -100,29 +100,6 @@ The project follows a three-tier architecture using Spring Boot and Microsoft SQ
 
 ---
 
-## 📸 Screenshots
-
-### Landing Page
-
-(Add Screenshot)
-
-### Login
-
-(Add Screenshot)
-
-### Government Dashboard
-
-(Add Screenshot)
-
-### Merchant Dashboard
-
-(Add Screenshot)
-
-### Public Dashboard
-
-(Add Screenshot)
-
----
 
 ## 🚀 Installation
 
