@@ -83,13 +83,13 @@ The project follows a three-tier architecture using Spring Boot and Microsoft SQ
 
 ## 🏗 System Architecture
 
-> Add your Architecture Diagram here.
+![Architecture](docs/system_architecture.png)
 
 ---
 
 ## 🗄 Database Design
 
-> Add your ER Diagram here.
+![ERD](docs/ER_Diagram.png)
 
 ---
 
