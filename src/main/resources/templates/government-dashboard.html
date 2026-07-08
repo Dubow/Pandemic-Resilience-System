@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Government Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { background: #f4f6f9; }
+        .navbar { padding: 15px 25px; }
+        .dashboard-title { font-weight: 700; color: #212529; }
+        .stat-card { border: none; border-radius: 15px; transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-number { font-size: 32px; font-weight: bold; }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-tabs .nav-link { font-weight: 600; color: #333; }
+        .nav-tabs .nav-link.active {
+            background: #212529;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        table { background: white; }
+        .btn { border-radius: 8px; }
+        canvas { max-height: 280px; }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand">PRS Government Dashboard</span>
+        <button onclick="logout()" class="btn btn-light">Logout</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <h3 class="dashboard-title">Welcome, <span id="name"></span></h3>
+    <p class="text-muted">Government control center for PRS monitoring and management.</p>
+
+    <ul class="nav nav-tabs mt-4">
+        <li class="nav-item"><button class="nav-link active" onclick="showSection('overview', this)">Dashboard</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('users', this)">Users</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('items', this)">Critical Items</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('rules', this)">Purchase Rules</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('vaccines', this)">Vaccinations</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('audit', this)">Audit Logs</button></li>
+    </ul>
+
+    <div class="row mt-4">
+        <div class="col-md-3"><div class="card shadow stat-card text-center"><div class="card-body"><h4 id="usersCount" class="stat-number text-primary">0</h4><p>Users</p></div></div></div>
+        <div class="col-md-3"><div class="card shadow stat-card text-center"><div class="card-body"><h4 id="itemsCount" class="stat-number text-success">0</h4><p>Critical Items</p></div></div></div>
+        <div class="col-md-3"><div class="card shadow stat-card text-center"><div class="card-body"><h4 id="rulesCount" class="stat-number text-warning">0</h4><p>Rules</p></div></div></div>
+        <div class="col-md-3"><div class="card shadow stat-card text-center"><div class="card-body"><h4 id="pendingVaccines" class="stat-number text-danger">0</h4><p>Pending Vaccines</p></div></div></div>
+    </div>
+
+    <div id="overview" class="section mt-4">
+        <h4>System Analytics</h4>
+        <p class="text-muted">Live PRS analytics based on registered users and vaccination verification status.</p>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h5>Users by Role</h5>
+                <canvas id="usersRoleChart"></canvas>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Vaccination Status</h5>
+                <canvas id="vaccinationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="users" class="section mt-4 d-none">
+        <h4>Registered Users</h4>
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+        </table>
+    </div>
+
+    <div id="items" class="section mt-4 d-none">
+        <h4>Create Critical Item</h4>
+
+        <div class="row mt-3">
+            <div class="col-md-4"><input id="itemName" class="form-control" placeholder="Item name"></div>
+            <div class="col-md-4">
+                <select id="category" class="form-control">
+                    <option value="Medical">Medical</option>
+                    <option value="Food">Food</option>
+                    <option value="Hygiene">Hygiene</option>
+                    <option value="Emergency">Emergency</option>
+                </select>
+            </div>
+            <div class="col-md-4"><button onclick="createItem()" class="btn btn-primary w-100">Create Item</button></div>
+        </div>
+
+        <h5 class="mt-4">Critical Items</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr>
+                <th>Item ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Restricted</th>
+            </tr>
+            </thead>
+            <tbody id="itemsTable"></tbody>
+        </table>
+    </div>
+
+    <div id="rules" class="section mt-4 d-none">
+        <h4>Create / Update Purchase Rule</h4>
+
+        <input type="hidden" id="editingRuleID">
+
+        <div class="row mt-3">
+            <div class="col-md-3"><select id="ruleItemID" class="form-control"></select></div>
+            <div class="col-md-3"><input id="maxQuantity" class="form-control" placeholder="Max Quantity"></div>
+            <div class="col-md-3">
+                <select id="periodType" class="form-control">
+                    <option value="DAY">Per Day</option>
+                    <option value="WEEK">Per Week</option>
+                    <option value="MONTH">Per Month</option>
+                </select>
+            </div>
+            <div class="col-md-3"><button onclick="saveRule()" id="ruleButton" class="btn btn-success w-100">Create Rule</button></div>
+        </div>
+
+        <button onclick="cancelEditRule()" class="btn btn-secondary mt-2">Cancel Edit</button>
+
+        <h5 class="mt-4">Purchase Rules</h5>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th>Rule ID</th>
+                <th>Item</th>
+                <th>Max Quantity</th>
+                <th>Period</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="rulesTable"></tbody>
+        </table>
+    </div>
+
+    <div id="vaccines" class="section mt-4 d-none">
+        <h4>Vaccination Records</h4>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+            <tr>
+                <th>Vaccination ID</th>
+                <th>User ID</th>
+                <th>Vaccine</th>
+                <th>Dose</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="vaccinationTable"></tbody>
+        </table>
+    </div>
+
+    <div id="audit" class="section mt-4 d-none">
+        <h4>Audit Logs</h4>
+
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+            <tr>
+                <th>Audit ID</th>
+                <th>User ID</th>
+                <th>Action</th>
+                <th>Table</th>
+                <th>Record ID</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            <tbody id="auditTable"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+document.getElementById("name").innerText = localStorage.getItem("fullName");
+
+let criticalItems = [];
+let usersRoleChart = null;
+let vaccinationChart = null;
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "/login-page";
+}
+
+function getRoleName(roleID) {
+    if (roleID === 1) return "PUBLIC";
+    if (roleID === 2) return "MERCHANT";
+    if (roleID === 3) return "GOVERNMENT";
+    return "UNKNOWN";
+}
+
+function showSection(sectionId, button) {
+    document.querySelectorAll(".section").forEach(section => section.classList.add("d-none"));
+    document.getElementById(sectionId).classList.remove("d-none");
+
+    document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+    button.classList.add("active");
+}
+
+function getItemName(itemID) {
+    const item = criticalItems.find(i => i.itemID === itemID);
+    return item ? item.itemName : itemID;
+}
+
+function loadDashboard() {
+    fetch("/api/users")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("usersCount").innerText = data.length;
+
+            let publicCount = 0;
+            let merchantCount = 0;
+            let governmentCount = 0;
+
+            let rows = "";
+            data.forEach(user => {
+                if (user.roleID === 1) publicCount++;
+                if (user.roleID === 2) merchantCount++;
+                if (user.roleID === 3) governmentCount++;
+
+                rows += `
+                    <tr>
+                        <td>${user.userID}</td>
+                        <td>${user.fullName}</td>
+                        <td>${user.email}</td>
+                        <td><span class="badge bg-info">${getRoleName(user.roleID)}</span></td>
+                        <td>${user.createdAt}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("usersTable").innerHTML = rows;
+            drawUsersRoleChart(publicCount, merchantCount, governmentCount);
+        });
+
+    fetch("/api/government/items")
+        .then(res => res.json())
+        .then(data => {
+            criticalItems = data;
+            document.getElementById("itemsCount").innerText = data.length;
+
+            let rows = "";
+            let options = "";
+
+            data.forEach(item => {
+                rows += `
+                    <tr>
+                        <td>${item.itemID}</td>
+                        <td>${item.itemName}</td>
+                        <td>${item.category}</td>
+                        <td>
+                            <span class="badge ${item.isRestricted ? 'bg-danger' : 'bg-secondary'}">
+                                ${item.isRestricted ? 'Restricted' : 'Open'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+
+                options += `<option value="${item.itemID}">${item.itemName}</option>`;
+            });
+
+            document.getElementById("itemsTable").innerHTML = rows;
+            document.getElementById("ruleItemID").innerHTML = options;
+
+            loadRules();
+        });
+
+    loadVaccinations();
+    loadAuditLogs();
+}
+
+function loadRules() {
+    fetch("/api/government/rules")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("rulesCount").innerText = data.length;
+
+            let rows = "";
+            data.forEach(rule => {
+                rows += `
+                    <tr>
+                        <td>${rule.ruleID}</td>
+                        <td>${getItemName(rule.itemID)}</td>
+                        <td>${rule.maxQuantity}</td>
+                        <td><span class="badge bg-warning text-dark">${rule.periodType}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning"
+                                onclick="editRule(${rule.ruleID}, ${rule.itemID}, ${rule.maxQuantity}, '${rule.periodType}')">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteRule(${rule.ruleID})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("rulesTable").innerHTML = rows;
+        });
+}
+
+function loadVaccinations() {
+    fetch("/api/government/vaccinations")
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+            let pending = 0;
+
+            data.forEach(v => {
+                if (v.verificationStatus === "PENDING") {
+                    pending++;
+                }
+
+                let statusBadge = v.verificationStatus === "PENDING"
+                    ? `<span class="badge bg-warning text-dark">PENDING</span>`
+                    : `<span class="badge bg-success">VERIFIED</span>`;
+
+                let actionButton = "";
+
+                if (v.verificationStatus === "PENDING") {
+                    actionButton = `
+                        <button class="btn btn-sm btn-success"
+                            onclick="verifyVaccination(${v.vaccinationID})">
+                            Approve
+                        </button>
+                    `;
+                } else {
+                    actionButton = `<span class="badge bg-success">Approved</span>`;
+                }
+
+                rows += `
+                    <tr>
+                        <td>${v.vaccinationID}</td>
+                        <td>${v.userID}</td>
+                        <td>${v.vaccineName}</td>
+                        <td>${v.doseNumber}</td>
+                        <td>${v.vaccinationDate}</td>
+                        <td>${statusBadge}</td>
+                        <td>${actionButton}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("pendingVaccines").innerText = pending;
+            document.getElementById("vaccinationTable").innerHTML = rows;
+
+            let verified = data.length - pending;
+            drawVaccinationChart(pending, verified);
+        });
+}
+
+function loadAuditLogs() {
+    fetch("/api/government/audit-logs")
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+            data.forEach(log => {
+                rows += `
+                    <tr>
+                        <td>${log.auditID}</td>
+                        <td>${log.userID}</td>
+                        <td>${log.actionType}</td>
+                        <td>${log.tableName}</td>
+                        <td>${log.recordID}</td>
+                        <td>${log.actionTime}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("auditTable").innerHTML = rows;
+        });
+}
+
+function createItem() {
+    const data = {
+        itemName: document.getElementById("itemName").value,
+        category: document.getElementById("category").value,
+        isRestricted: true
+    };
+
+    fetch("/api/government/items", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Critical item created");
+        document.getElementById("itemName").value = "";
+        loadDashboard();
+    });
+}
+
+function saveRule() {
+    const editingRuleID = document.getElementById("editingRuleID").value;
+
+    const data = {
+        itemID: parseInt(document.getElementById("ruleItemID").value),
+        maxQuantity: parseInt(document.getElementById("maxQuantity").value),
+        periodType: document.getElementById("periodType").value,
+        allowedDOBLastDigits: "0,1,2,3,4,5,6,7,8,9",
+        createdBy: parseInt(localStorage.getItem("userID"))
+    };
+
+    let url = "/api/government/rules";
+    let method = "POST";
+
+    if (editingRuleID) {
+        url = `/api/government/rules/${editingRuleID}`;
+        method = "PUT";
+    }
+
+    fetch(url, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert(editingRuleID ? "Purchase rule updated" : "Purchase rule created");
+        cancelEditRule();
+        loadDashboard();
+    });
+}
+
+function editRule(ruleID, itemID, maxQuantity, periodType) {
+    document.getElementById("editingRuleID").value = ruleID;
+    document.getElementById("ruleItemID").value = itemID;
+    document.getElementById("maxQuantity").value = maxQuantity;
+    document.getElementById("periodType").value = periodType;
+    document.getElementById("ruleButton").innerText = "Update Rule";
+}
+
+function cancelEditRule() {
+    document.getElementById("editingRuleID").value = "";
+    document.getElementById("maxQuantity").value = "";
+    document.getElementById("periodType").value = "DAY";
+    document.getElementById("ruleButton").innerText = "Create Rule";
+}
+
+function deleteRule(ruleID) {
+    if (!confirm("Are you sure you want to delete this purchase rule?")) {
+        return;
+    }
+
+    fetch(`/api/government/rules/${ruleID}`, {
+        method: "DELETE"
+    })
+    .then(res => res.text())
+    .then(result => {
+        alert(result);
+        loadDashboard();
+    });
+}
+
+function verifyVaccination(id) {
+    fetch(`/api/government/vaccinations/${id}/verify`, {
+        method: "PUT"
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Vaccination approved");
+        loadDashboard();
+    });
+}
+
+function drawUsersRoleChart(publicCount, merchantCount, governmentCount) {
+    const ctx = document.getElementById("usersRoleChart");
+
+    if (usersRoleChart) {
+        usersRoleChart.destroy();
+    }
+
+    usersRoleChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: ["Public", "Merchant", "Government"],
+            datasets: [{
+                data: [publicCount, merchantCount, governmentCount]
+            }]
+        }
+    });
+}
+
+function drawVaccinationChart(pending, verified) {
+    const ctx = document.getElementById("vaccinationChart");
+
+    if (vaccinationChart) {
+        vaccinationChart.destroy();
+    }
+
+    vaccinationChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["Pending", "Verified"],
+            datasets: [{
+                data: [pending, verified]
+            }]
+        }
+    });
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

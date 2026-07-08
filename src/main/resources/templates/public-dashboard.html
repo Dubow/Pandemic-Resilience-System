@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Public Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { background: #f4f6f9; }
+        .navbar { padding: 15px 25px; }
+        .dashboard-title { font-weight: 700; color: #0d6efd; }
+        .stat-card { border: none; border-radius: 15px; transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-number { font-size: 32px; font-weight: bold; }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-tabs .nav-link { font-weight: 600; color: #333; }
+        .nav-tabs .nav-link.active {
+            background: #0d6efd;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        .btn { border-radius: 8px; }
+        table { background: white; }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+        <span class="navbar-brand">PRS Public Dashboard</span>
+        <button onclick="logout()" class="btn btn-light">Logout</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <h3 class="dashboard-title">Welcome, <span id="name"></span></h3>
+    <p class="text-muted">Manage your purchases, family, vaccination records, and PRS identity.</p>
+
+    <ul class="nav nav-tabs mt-4">
+        <li class="nav-item"><button class="nav-link active" onclick="showSection('overview', this)">Dashboard</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('buy', this)">Buy Items</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('purchases', this)">Purchases</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('family', this)">Family</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('vaccines', this)">Vaccinations</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showSection('identity', this)">PRS Identity</button></li>
+    </ul>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card shadow stat-card text-center">
+                <div class="card-body">
+                    <h4 id="purchaseCount" class="stat-number text-primary">0</h4>
+                    <p>Purchases</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow stat-card text-center">
+                <div class="card-body">
+                    <h4 id="familyCount" class="stat-number text-success">0</h4>
+                    <p>Family Members</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow stat-card text-center">
+                <div class="card-body">
+                    <h4 id="vaccinationCount" class="stat-number text-warning">0</h4>
+                    <p>Vaccinations</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow stat-card text-center">
+                <div class="card-body">
+                    <h4 id="prsStatus" class="stat-number text-danger">No</h4>
+                    <p>PRS ID</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overview" class="section mt-4">
+        <h4>My PRS Overview</h4>
+        <p class="text-muted">
+            Use this dashboard to buy available critical items, manage family members,
+            upload vaccination records, and view your PRS identity.
+        </p>
+    </div>
+
+    <div id="buy" class="section mt-4 d-none">
+        <h4>Available Critical Items</h4>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-primary">
+            <tr>
+                <th>Store</th>
+                <th>Item</th>
+                <th>Available Quantity</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="availableStockTable"></tbody>
+        </table>
+
+        <h5 class="mt-4">Selected Item</h5>
+
+        <div class="row">
+            <div class="col-md-3">
+                <input id="selectedStore" class="form-control" placeholder="Selected Store" readonly>
+                <input id="storeID" type="hidden">
+            </div>
+
+            <div class="col-md-3">
+                <input id="selectedItem" class="form-control" placeholder="Selected Item" readonly>
+                <input id="itemID" type="hidden">
+            </div>
+
+            <div class="col-md-3">
+                <input id="quantity" class="form-control" placeholder="Quantity">
+            </div>
+
+            <div class="col-md-3">
+                <button onclick="buyItem()" class="btn btn-primary w-100">Buy Item</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="purchases" class="section mt-4 d-none">
+        <h4>My Purchase History</h4>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+            <tr>
+                <th>Purchase ID</th>
+                <th>Store ID</th>
+                <th>Item ID</th>
+                <th>Quantity</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody id="purchaseTable"></tbody>
+        </table>
+    </div>
+
+    <div id="family" class="section mt-4 d-none">
+        <h4>Add Family Member</h4>
+
+        <div class="row">
+            <div class="col-md-4">
+                <input id="familyName" class="form-control" placeholder="Full Name">
+            </div>
+
+            <div class="col-md-4">
+                <input id="familyDOB" type="date" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+                <button onclick="addFamily()" class="btn btn-success w-100">Add Family</button>
+            </div>
+        </div>
+
+        <h5 class="mt-4">My Family Members</h5>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-success">
+            <tr>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>PRS Code</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="familyTable"></tbody>
+        </table>
+    </div>
+
+    <div id="vaccines" class="section mt-4 d-none">
+        <h4>Upload Vaccination Record</h4>
+
+        <div class="row">
+            <div class="col-md-3">
+                <select id="vaccineName" class="form-control">
+                    <option value="COVID-19 Pfizer">COVID-19 Pfizer</option>
+                    <option value="COVID-19 Moderna">COVID-19 Moderna</option>
+                    <option value="COVID-19 Sinopharm">COVID-19 Sinopharm</option>
+                    <option value="Yellow Fever">Yellow Fever</option>
+                    <option value="Polio">Polio</option>
+                    <option value="Influenza">Influenza</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="doseNumber" class="form-control">
+                    <option value="1">Dose 1</option>
+                    <option value="2">Dose 2</option>
+                    <option value="3">Booster</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <input id="vaccinationDate" type="date" class="form-control">
+            </div>
+
+            <div class="col-md-3">
+                <button onclick="uploadVaccination()" class="btn btn-warning w-100">Upload</button>
+            </div>
+        </div>
+
+        <h5 class="mt-4">My Vaccination Records</h5>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-warning">
+            <tr>
+                <th>Vaccine</th>
+                <th>Dose</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="vaccinationTable"></tbody>
+        </table>
+    </div>
+
+    <div id="identity" class="section mt-4 d-none">
+        <h4>Create PRS Identity</h4>
+
+        <div class="row">
+            <div class="col-md-4">
+                <input id="nationalID" class="form-control" placeholder="National ID / Passport">
+            </div>
+
+            <div class="col-md-4">
+                <input id="dateOfBirth" type="date" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+                <button onclick="createPRS()" class="btn btn-danger w-100">Create PRS ID</button>
+            </div>
+        </div>
+
+        <div class="card mt-4 shadow stat-card">
+            <div class="card-body">
+                <h5>My PRS Identity</h5>
+                <p><strong>Status:</strong> <span id="prsStatusText">Not created</span></p>
+                <p><strong>PRS Code:</strong> <span id="prsCodeText">Not available</span></p>
+                <p><strong>Date of Birth:</strong> <span id="prsDOBText">Not available</span></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const userID = parseInt(localStorage.getItem("userID"));
+document.getElementById("name").innerText = localStorage.getItem("fullName");
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "/login-page";
+}
+
+function showSection(sectionId, button) {
+    document.querySelectorAll(".section").forEach(section => section.classList.add("d-none"));
+    document.getElementById(sectionId).classList.remove("d-none");
+
+    document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+    button.classList.add("active");
+}
+
+function loadDashboard() {
+    loadAvailableItems();
+    loadPurchases();
+    loadFamily();
+    loadVaccinations();
+    loadPRSIdentity();
+}
+
+function loadAvailableItems() {
+    fetch("/api/public/available-items")
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(stock => {
+                rows += `
+                    <tr>
+                        <td>${stock.storeName}</td>
+                        <td>${stock.itemName}</td>
+                        <td>${stock.quantity}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success"
+                                onclick="selectStock(${stock.storeID}, '${stock.storeName}', ${stock.itemID}, '${stock.itemName}')">
+                                Select
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("availableStockTable").innerHTML = rows;
+        });
+}
+
+function selectStock(storeID, storeName, itemID, itemName) {
+    document.getElementById("storeID").value = storeID;
+    document.getElementById("selectedStore").value = storeName;
+    document.getElementById("itemID").value = itemID;
+    document.getElementById("selectedItem").value = itemName;
+}
+
+function buyItem() {
+    const storeID = document.getElementById("storeID").value;
+    const itemID = document.getElementById("itemID").value;
+    const quantity = document.getElementById("quantity").value;
+
+    if (!storeID || !itemID || !quantity) {
+        alert("Please select an item and enter quantity.");
+        return;
+    }
+
+    const data = {
+        userID: userID,
+        storeID: parseInt(storeID),
+        itemID: parseInt(itemID),
+        quantity: parseInt(quantity)
+    };
+
+    fetch("/api/public/purchases", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(result => {
+        alert(result);
+        document.getElementById("quantity").value = "";
+        loadDashboard();
+    });
+}
+
+function loadPurchases() {
+    fetch(`/api/public/purchases/by-user/${userID}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("purchaseCount").innerText = data.length;
+
+            let rows = "";
+            data.forEach(p => {
+                rows += `
+                    <tr>
+                        <td>${p.purchaseID}</td>
+                        <td>${p.storeID}</td>
+                        <td>${p.itemID}</td>
+                        <td>${p.quantity}</td>
+                        <td>${p.purchaseDate || ""}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("purchaseTable").innerHTML = rows;
+        });
+}
+
+function addFamily() {
+    const fullName = document.getElementById("familyName").value;
+    const dateOfBirth = document.getElementById("familyDOB").value;
+
+    if (!fullName || !dateOfBirth) {
+        alert("Please enter family member name and date of birth.");
+        return;
+    }
+
+    const data = {
+        parentUserID: userID,
+        fullName: fullName,
+        dateOfBirth: dateOfBirth
+    };
+
+    fetch("/api/public/family", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Family member added");
+        document.getElementById("familyName").value = "";
+        document.getElementById("familyDOB").value = "";
+        loadFamily();
+    });
+}
+
+function loadFamily() {
+    fetch(`/api/public/family/${userID}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("familyCount").innerText = data.length;
+
+            let rows = "";
+            data.forEach(f => {
+                rows += `
+                    <tr>
+                        <td>${f.fullName}</td>
+                        <td>${f.dateOfBirth}</td>
+                        <td>${f.prsCode}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteFamily(${f.familyMemberID})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("familyTable").innerHTML = rows;
+        });
+}
+
+function deleteFamily(id) {
+    if (!confirm("Delete this family member?")) return;
+
+    fetch(`/api/public/family/${id}`, {
+        method: "DELETE"
+    })
+    .then(res => res.text())
+    .then(result => {
+        alert(result);
+        loadFamily();
+    });
+}
+
+function uploadVaccination() {
+    const vaccineName = document.getElementById("vaccineName").value;
+    const doseNumber = document.getElementById("doseNumber").value;
+    const vaccinationDate = document.getElementById("vaccinationDate").value;
+
+    if (!vaccinationDate) {
+        alert("Please select vaccination date.");
+        return;
+    }
+
+    const data = {
+        userID: userID,
+        vaccineName: vaccineName,
+        doseNumber: parseInt(doseNumber),
+        vaccinationDate: vaccinationDate,
+        fhirJson: "{\"resourceType\":\"Immunization\",\"status\":\"completed\"}"
+    };
+
+    fetch("/api/public/vaccinations", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Vaccination uploaded. Status is pending until government approves.");
+        document.getElementById("vaccinationDate").value = "";
+        loadVaccinations();
+    });
+}
+
+function loadVaccinations() {
+    fetch(`/api/public/vaccinations/by-user/${userID}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("vaccinationCount").innerText = data.length;
+
+            let rows = "";
+            data.forEach(v => {
+                let badge = v.verificationStatus === "VERIFIED"
+                    ? `<span class="badge bg-success">APPROVED</span>`
+                    : `<span class="badge bg-warning text-dark">PENDING</span>`;
+
+                rows += `
+                    <tr>
+                        <td>${v.vaccineName}</td>
+                        <td>${v.doseNumber}</td>
+                        <td>${v.vaccinationDate}</td>
+                        <td>${badge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="deleteVaccination(${v.vaccinationID})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("vaccinationTable").innerHTML = rows;
+        });
+}
+
+function deleteVaccination(id) {
+    if (!confirm("Delete this vaccination record?")) return;
+
+    fetch(`/api/public/vaccinations/${id}`, {
+        method: "DELETE"
+    })
+    .then(res => res.text())
+    .then(result => {
+        alert(result);
+        loadVaccinations();
+    });
+}
+
+function createPRS() {
+    const nationalID = document.getElementById("nationalID").value;
+    const dateOfBirth = document.getElementById("dateOfBirth").value;
+
+    if (!nationalID || !dateOfBirth) {
+        alert("Please enter National ID and date of birth.");
+        return;
+    }
+
+    const data = {
+        userID: userID,
+        nationalID: nationalID,
+        dateOfBirth: dateOfBirth
+    };
+
+    fetch("/api/public/prs-id", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(result => {
+        alert(result);
+        document.getElementById("nationalID").value = "";
+        document.getElementById("dateOfBirth").value = "";
+        loadPRSIdentity();
+    });
+}
+
+function loadPRSIdentity() {
+    fetch(`/api/public/prs-id/${userID}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                document.getElementById("prsStatus").innerText = "Yes";
+                document.getElementById("prsStatusText").innerText = "Created";
+                document.getElementById("prsCodeText").innerText = data.prsCode;
+                document.getElementById("prsDOBText").innerText = data.dateOfBirth || "Not available";
+            } else {
+                document.getElementById("prsStatus").innerText = "No";
+                document.getElementById("prsStatusText").innerText = "Not created";
+                document.getElementById("prsCodeText").innerText = "Not available";
+                document.getElementById("prsDOBText").innerText = "Not available";
+            }
+        });
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PRS - Pandemic Resilience System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0d6efd, #198754);
+            color: white;
+            padding: 90px 0;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+        }
+
+        .feature-card {
+            border: none;
+            border-radius: 18px;
+            transition: 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-box {
+            border-radius: 18px;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-weight: 700;
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 10px 25px;
+        }
+
+        footer {
+            background: #212529;
+            color: white;
+            padding: 25px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">PRS System</a>
+
+        <div>
+            <a href="/login-page" class="btn btn-outline-light me-2">Login</a>
+            <a href="/register-page" class="btn btn-success">Create Account</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-md-7">
+                <h1>Pandemic Resilience System</h1>
+                <p class="lead mt-3">
+                    A secure platform for managing critical items, vaccination records,
+                    merchant stock, purchase rules, and public access during emergencies.
+                </p>
+
+                <div class="mt-4">
+                    <a href="/login-page" class="btn btn-light me-2">Login</a>
+                    <a href="/register-page" class="btn btn-outline-light">Register Now</a>
+                </div>
+            </div>
+
+            <div class="col-md-5 text-center mt-4 mt-md-0">
+                <div class="stat-box text-dark">
+                    <h3 class="fw-bold text-primary">PRS Portal</h3>
+                    <p class="text-muted">
+                        Connecting citizens, merchants, and government officials through one
+                        emergency resource management system.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h2 class="section-title">Who Uses PRS?</h2>
+        <p class="text-muted">Different dashboards for different users.</p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body text-center">
+                    <h3>👤</h3>
+                    <h4>Public Users</h4>
+                    <p>
+                        Buy restricted critical items, manage family members,
+                        create PRS identity, and upload vaccination records.
+                    </p>
+                    <a href="/login-page" class="btn btn-primary">Public Login</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body text-center">
+                    <h3>🏪</h3>
+                    <h4>Merchants</h4>
+                    <p>
+                        Create merchant profiles, manage stores, update stock,
+                        and supply essential items to the public.
+                    </p>
+                    <a href="/login-page" class="btn btn-success">Merchant Login</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body text-center">
+                    <h3>🏛️</h3>
+                    <h4>Government</h4>
+                    <p>
+                        Manage critical items, create purchase rules, verify vaccinations,
+                        monitor users, and view audit logs.
+                    </p>
+                    <a href="/login-page" class="btn btn-dark">Government Login</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h2 class="section-title">Core Features</h2>
+        <p class="text-muted">Built for emergency resource coordination.</p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="stat-box text-center">
+                <h3>📦</h3>
+                <h5>Critical Items</h5>
+                <p class="text-muted">Government-controlled essential resources.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-box text-center">
+                <h3>🛒</h3>
+                <h5>Smart Purchases</h5>
+                <p class="text-muted">Purchase limits and stock validation.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-box text-center">
+                <h3>💉</h3>
+                <h5>Vaccination</h5>
+                <p class="text-muted">Upload and government verification workflow.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-box text-center">
+                <h3>📝</h3>
+                <h5>Audit Logs</h5>
+                <p class="text-muted">Track important activities in the system.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="container mt-5 mb-5">
+
+    <div class="text-center mb-4">
+        <h2 class="section-title">How It Works</h2>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">1. Government Sets Rules</h5>
+                    <p>
+                        Officials create critical items and define purchase limits such as
+                        maximum quantity per day, week, or month.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">2. Merchants Add Stock</h5>
+                    <p>
+                        Registered merchants create stores and update available stock for
+                        essential goods.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">3. Public Users Purchase</h5>
+                    <p>
+                        Citizens select available items, purchase within government rules,
+                        and manage their PRS profile.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <div class="container text-center">
+        <p class="mb-1">Pandemic Resilience System</p>
+        <small>© 2026</small>
+    </div>
+</footer>
+
+</body>
+</html>
