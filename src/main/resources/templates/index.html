@@ -58,55 +58,53 @@
         }
 
         @media (max-width: 768px) {
+            .nav-buttons {
+                display: none !important;
+            }
+
+            .navbar .container {
+                justify-content: center;
+            }
+
+            .navbar-brand {
+                margin: auto;
+                font-size: 1.5rem;
+            }
+
             .hero {
                 padding: 60px 20px;
                 text-align: center;
             }
 
+            .hero h1 {
+                font-size: 2rem;
+            }
+
             .hero p {
-                font-size: 18px;
+                font-size: 17px;
             }
 
-            .stat-box {
-                margin-top: 30px;
-            }
-
-            .navbar .container {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .btn {
+            .hero .btn {
                 width: 100%;
                 margin-bottom: 10px;
             }
 
-            .section-title {
-                font-size: 30px;
-            }
-
-            h4 {
-                font-size: 24px;
+            .stat-box {
+                margin-top: 20px;
             }
 
             .card {
                 margin-bottom: 20px;
             }
 
+            .section-title {
+                font-size: 28px;
+            }
+
             footer {
                 text-align: center;
             }
         }
-		/* Hide navbar on phones */
-		@media (max-width: 768px) {
-		    nav.d-flex flex-column flex-md-row gap-2 {
-		        display: none;
-		    }
-
-		    .hero {
-		        padding-top: 70px;
-		    }
-		}
     </style>
 </head>
 
@@ -116,7 +114,7 @@
     <div class="container">
         <a class="navbar-brand fw-bold" href="/">PRS System</a>
 
-        <div class="d-flex flex-column flex-md-row gap-2">
+        <div class="nav-buttons d-flex flex-column flex-md-row gap-2">
             <a href="/login-page" class="btn btn-outline-light">Login</a>
             <a href="/register-page" class="btn btn-success">Create Account</a>
         </div>
@@ -302,7 +300,7 @@
 <footer>
     <div class="container text-center">
         <p class="mb-1">Pandemic Resilience System</p>
-        <small>© 2026</small>
+        <small>copyright © 2026</small>
     </div>
 </footer>
 
