@@ -99,8 +99,8 @@
         }
 		/* Hide navbar on phones */
 		@media (max-width: 768px) {
-			.nav-buttons {
-			        display: none;
+		    nav.d-flex flex-column flex-md-row gap-2 {
+		        display: none;
 		    }
 
 		    .hero {
@@ -116,7 +116,7 @@
     <div class="container">
         <a class="navbar-brand fw-bold" href="/">PRS System</a>
 
-        <div class="nav-buttons d-flex flex-column flex-md-row gap-2">
+        <div class="d-flex flex-column flex-md-row gap-2">
             <a href="/login-page" class="btn btn-outline-light">Login</a>
             <a href="/register-page" class="btn btn-success">Create Account</a>
         </div>
