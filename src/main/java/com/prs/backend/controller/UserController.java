@@ -1,0 +1,26 @@
+package com.prs.backend.controller;
+
+import com.prs.backend.entity.User;
+import com.prs.backend.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getAllUsers();
+    }
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return userService.registerUser(user);
+    }
+}
